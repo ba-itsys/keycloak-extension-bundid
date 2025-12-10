@@ -1,0 +1,33 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags: '**'
+  workflow_dispatch: { }
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+          server-id: central # Maven Central (Sonatype)
+          server-username: MAVEN_USERNAME # env variable for username in deploy
+          server-password: MAVEN_PASSWORD # env variable for token in deploy
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+
+      - name: Publish package
+        run: >
+          mvn
+          --batch-mode
+          -Dgpg.passphrase="${{ secrets.MAVEN_GPG_PASSPHRASE }}"
+          -Ppublish
+          deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_TOKEN_PASSWORD }}

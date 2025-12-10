@@ -26,6 +26,7 @@
   <description>Keycloak-Provider zur Anbindung an BundID</description>
 
   <url>https://github.com/opdt/keycloak-extension-bundid</url>
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -33,10 +34,11 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
   <developers>
     <developer>
-      <id>rernst</id>
-      <name>Ralf Ernst</name>
+      <organization>IT-Systemhaus der Bundesagentur für Arbeit</organization>
+      <organizationUrl>https://github.com/ba-itsys</organizationUrl>
     </developer>
   </developers>
 
@@ -46,24 +48,12 @@
     <url>https://github.com/opdt/keycloak-extension-bundid/tree/main/</url>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>ossrh</id>
-      <url>https://ossrh-staging-api.central.sonatype.com/service/local/</url>
-    </repository>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <properties>
     <java.version>21</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <keycloak-version>26.2.5</keycloak-version>
     <auto-service.version>1.1.1</auto-service.version>
-    <spotless.version>2.44.3</spotless.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <sonar.organization>opdt</sonar.organization>
@@ -161,9 +151,16 @@
         </plugin>
 
         <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.12</version>
+        </plugin>
+
+        <!-- Attach sources JAR -->
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.4.0</version>
           <executions>
             <execution>
               <id>attach-sources</id>
@@ -174,10 +171,11 @@
           </executions>
         </plugin>
 
+        <!-- Attach Javadoc JAR -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.11.2</version>
+          <version>3.12.0</version>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -188,55 +186,11 @@
           </executions>
         </plugin>
 
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.12</version>
-        </plugin>
-
-        <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <version>${spotless.version}</version>
-          <configuration>
-            <formats>
-              <format>
-                <includes>
-                  <include>.gitattributes</include>
-                  <include>.gitignore</include>
-                </includes>
-                <trimTrailingWhitespace></trimTrailingWhitespace>
-                <endWithNewline></endWithNewline>
-                <indent>
-                  <spaces>true</spaces>
-                  <spacesPerTab>4</spacesPerTab>
-                </indent>
-              </format>
-            </formats>
-            <!-- define a language-specific format -->
-            <java>
-              <palantirJavaFormat></palantirJavaFormat>
-              <importOrder></importOrder>
-              <removeUnusedImports></removeUnusedImports>
-              <formatAnnotations></formatAnnotations>
-            </java>
-            <pom>
-              <sortPom></sortPom>
-            </pom>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
+        <!-- Sign JAR -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.2.7</version>
+          <version>3.2.8</version>
           <executions>
             <execution>
               <id>sign-artifacts</id>
@@ -248,17 +202,19 @@
           </executions>
         </plugin>
 
+        <!-- Publish to Maven Central (Sonatype) -->
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.7.0</version>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.9.0</version>
           <extensions>true</extensions>
           <configuration>
-            <serverId>ossrh</serverId>
-            <nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            <publishingServerId>central</publishingServerId>
+            <autoPublish>true</autoPublish>
+            <waitUntil>published</waitUntil>
           </configuration>
         </plugin>
+
       </plugins>
     </pluginManagement>
 
@@ -288,13 +244,53 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.44.3</version>
+        <configuration>
+          <formats>
+            <format>
+              <includes>
+                <include>.gitattributes</include>
+                <include>.gitignore</include>
+              </includes>
+              <trimTrailingWhitespace/>
+              <endWithNewline/>
+              <indent>
+                <spaces>true</spaces>
+                <spacesPerTab>4</spacesPerTab>
+              </indent>
+            </format>
+          </formats>
+          <!-- define a language-specific format -->
+          <java>
+            <palantirJavaFormat/>
+            <importOrder/>
+            <removeUnusedImports/>
+            <formatAnnotations/>
+          </java>
+          <pom>
+            <sortPom>
+              <expandEmptyElements>false</expandEmptyElements>
+            </sortPom>
+          </pom>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
   <profiles>
     <profile>
-      <id>deploy</id>
-      <!-- active by default in samuelmeuli/action-maven-publish -->
+      <id>publish</id>
       <build>
         <plugins>
           <plugin>
@@ -313,8 +309,8 @@
           </plugin>
 
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
           </plugin>
         </plugins>
       </build>
