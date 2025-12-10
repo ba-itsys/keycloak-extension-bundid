@@ -51,11 +51,7 @@ public class BundIdUserSessionEmailMapper extends BundIdUserSessionAttributeMapp
 
     @Override
     protected void updateSession(
-            KeycloakSession session,
-            BrokeredIdentityContext context,
-            String key,
-            String value,
-            boolean isStorkLevel) {
+            KeycloakSession session, BrokeredIdentityContext context, String key, String value, boolean isStorkLevel) {
         super.updateSession(session, context, key, value, isStorkLevel);
         context.setEmail(value);
     }

@@ -216,12 +216,7 @@ public class BundIdUserSessionAttributeMapper extends AbstractIdentityProviderMa
                             excludeFromAutomapper
                                     ? BUNDID_SESSION_ATTRIBUTE_PREFIX_EXCLUDE_FROM_AUTOMAPPER
                                     : BUNDID_SESSION_ATTRIBUTE_PREFIX);
-            updateSession(
-                    session,
-                    context,
-                    prefix + attribute,
-                    attributeValuesInContext.get(0),
-                    false);
+            updateSession(session, context, prefix + attribute, attributeValuesInContext.get(0), false);
             findStorkValueForAttribute(attributeName, context)
                     .ifPresent(stork -> updateSession(
                             session, context.getAuthenticationSession(), prefix + attribute, stork, true));
@@ -230,11 +225,7 @@ public class BundIdUserSessionAttributeMapper extends AbstractIdentityProviderMa
 
     // Extension point for custom behavior
     protected void updateSession(
-            KeycloakSession session,
-            BrokeredIdentityContext context,
-            String key,
-            String value,
-            boolean isStorkLevel) {
+            KeycloakSession session, BrokeredIdentityContext context, String key, String value, boolean isStorkLevel) {
         updateSession(session, context.getAuthenticationSession(), key, value, isStorkLevel);
     }
 
