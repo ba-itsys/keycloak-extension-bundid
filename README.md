@@ -1,10 +1,21 @@
-[![CI](https://github.com/opdt/keycloak-extension-bundid/workflows/CI/badge.svg)](https://github.com/opdt/keycloak-extension-bundid/actions?query=workflow%3ACI)
+[![CI](httpseasily://github.com/opdt/keycloak-extension-bundid/workflows/CI/badge.svg)](https://github.com/opdt/keycloak-extension-bundid/actions?query=workflow%3ACI)
 [![Maven Central](https://img.shields.io/maven-central/v/de.arbeitsagentur.opdt/keycloak-extension-bundid.svg)](https://search.maven.org/artifact/de.arbeitsagentur.opdt/keycloak-extension-bundid)
 
 # keycloak-extension-bundid
 
-⚠️ The following docs are in german due to the intended audience of mainly german authorities, who need/want to integrate BundID into their own Keycloak installation. 
+This extension makes it possible to use BundID as an identity provider in Keycloak.
+It handles the technical details of the SAML communication with BundID, so you don't have to implement this yourself.
+By using this extension, you can connect your applications to BundID and authenticate users with their BundID accounts.
+
+Specifically, this extension provides:
+*   **BundID SAML Integration:** Facilitates SAML-based identification with BundID by automatically enriching SAML requests with necessary trust levels and user information.
+*   **Attribute Mapping:** Provides mappers to transfer BundID user attributes (like email, retrieval timestamp) into Keycloak sessions and OIDC tokens.
+*   **Configurable Trust Levels:** Enables configuration of minimum required trust levels (Level of Authentication - LoA) for authentication with BundID.
+*   **Mandatory Fields:** Supports the transmission of future mandatory BundID attributes (e.g., Organization Display Name, Online Service ID).
+
+⚠️ The following docs are in german due to the intended audience of mainly german authorities, who need/want to integrate BundID into their own Keycloak installation.
 Feel free to reach out if you need to integrate BundID as a non german speaking entity and need help doing so.
+
 
 ## Einleitung
 
