@@ -11,7 +11,7 @@ Specifically, this extension provides:
 *   **BundID SAML Integration:** Facilitates SAML-based identification with BundID by automatically enriching SAML requests with necessary trust levels and user information.
 *   **Attribute Mapping:** Provides mappers to transfer BundID user attributes (like email, retrieval timestamp) into Keycloak sessions and OIDC tokens.
 *   **Configurable Trust Levels:** Enables configuration of minimum required trust levels (Level of Authentication - LoA) for authentication with BundID.
-*   **Mandatory Fields:** Supports the transmission of future mandatory BundID attributes (e.g., Organization Display Name, Online Service ID).
+*   **Mandatory Fields:** Supports the transmission of mandatory BundID attributes (e.g., Organization Display Name, Online Service ID).
 
 ⚠️ The following docs are in german due to the intended audience of mainly german authorities, who need/want to integrate BundID into their own Keycloak installation.
 Feel free to reach out if you need to integrate BundID as a non german speaking entity and need help doing so.
@@ -93,7 +93,7 @@ Gesteuert wird dies über den Parameter `KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR
 		</akdb:AuthenticationRequest>
 	</saml2p:Extensions>
 
-Die BundID schreibt zukünftig die Übergabe weiterer Pflichtattribute vor:
+Die BundID schreibt die Übergabe weiterer Pflichtattribute vor:
 - Organization Display Name (wird dem Nutzer vor Rücksprung zum Service Provider angezeigt)
 - Online Service ID (der für den Service Provider durch das BSI vergebene Identifier)
 
