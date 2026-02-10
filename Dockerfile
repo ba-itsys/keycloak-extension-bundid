@@ -1,4 +1,6 @@
-FROM jelastic/maven:3.9.5-openjdk-21 AS build
+ARG KEYCLOAK_VERSION=26.5.2
+
+FROM maven:3-eclipse-temurin-21-alpine AS build
 
 COPY src /app/src
 COPY pom.xml /app
@@ -6,8 +8,6 @@ COPY pom.xml /app
 WORKDIR /app
 RUN mvn clean install -U
 
+FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} AS keycloak
 
-FROM quay.io/keycloak/keycloak AS keycloak
-
-COPY --from=build /app/target/keycloak-extension-bundid-2.2.1-26.1-SNAPSHOT.jar /opt/keycloak/providers/keycloak-extension-bundid-2.2.1-26.1-SNAPSHOT.jar
-
+COPY --from=build /app/target/keycloak-extension-bundid*.jar /opt/keycloak/providers/keycloak-extension-bundid.jar
