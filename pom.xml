@@ -25,7 +25,7 @@
   <name>keycloak-extension-bundid</name>
   <description>Keycloak-Provider zur Anbindung an BundID</description>
 
-  <url>https://github.com/opdt/keycloak-extension-bundid</url>
+  <url>https://github.com/ba-itsys/keycloak-extension-bundid</url>
 
   <licenses>
     <license>
@@ -43,9 +43,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/opdt/keycloak-extension-bundid.git</connection>
-    <developerConnection>scm:git:git@github.com:opdt/keycloak-extension-bundid.git</developerConnection>
-    <url>https://github.com/opdt/keycloak-extension-bundid/tree/main/</url>
+    <connection>scm:git:git://github.com/ba-itsys/keycloak-extension-bundid.git</connection>
+    <developerConnection>scm:git:git@github.com:ba-itsys/keycloak-extension-bundid.git</developerConnection>
+    <url>https://github.com/ba-itsys/keycloak-extension-bundid/tree/main/</url>
   </scm>
 
   <properties>
@@ -59,7 +59,7 @@
     <sonar.organization>opdt</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-    <junit.version>5.12.1</junit.version>
+    <junit.version>5.14.2</junit.version>
   </properties>
 
   <dependencies>
@@ -105,19 +105,19 @@
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>4.0.2</version>
+      <version>4.0.5</version>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>4.0.5</version>
+      <version>4.0.6</version>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.16.1</version>
+      <version>5.21.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -128,12 +128,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.4.2</version>
+          <version>3.5.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.14.0</version>
+          <version>3.15.0</version>
           <configuration>
             <source>${java.version}</source>
             <target>${java.version}</target>
@@ -153,7 +153,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.12</version>
+          <version>0.8.14</version>
         </plugin>
 
         <!-- Attach sources JAR -->
@@ -247,7 +247,7 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>2.44.3</version>
+        <version>3.2.1</version>
         <configuration>
           <formats>
             <format>
