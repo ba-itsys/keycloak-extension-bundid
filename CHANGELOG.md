@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.4.5...v2.5.0) (2026-02-10)
+
+
+### Features
+
+* **docker:** added example docker build ([11028e9](https://github.com/ba-itsys/keycloak-extension-bundid/commit/11028e90ceb154161179b8fc9bc481e25550d42d))
+
 ## [2.4.5](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.4.4...v2.4.5) (2026-02-03)
 
 

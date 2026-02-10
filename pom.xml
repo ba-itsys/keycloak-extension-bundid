@@ -20,7 +20,7 @@
 
   <groupId>de.arbeitsagentur.opdt</groupId>
   <artifactId>keycloak-extension-bundid</artifactId>
-  <version>2.4.6-SNAPSHOT</version>
+  <version>2.5.0</version>
 
   <name>keycloak-extension-bundid</name>
   <description>Keycloak-Provider zur Anbindung an BundID</description>
