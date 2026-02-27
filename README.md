@@ -109,3 +109,59 @@ Die BundID schreibt die Übergabe weiterer Pflichtattribute vor:
 Die Werte für diese Attribute werden über Keycloak-Konfigurationsparameter definiert (hier als ENV-Variable angegeben, kann aber analog sonstiger Keycloak-Konfiguration auch anders gesetzt werden):
 - `KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_ONLINE_SERVICE_ID`
 - `KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_ORGANIZATION_DISPLAY_NAME`
+
+### Steuerung der Authentifizierungsmethoden
+
+Die Extension ermöglicht es, einzelne BundID-Authentifizierungsmethoden explizit zu aktivieren oder zu deaktivieren.
+Dies geschieht über zwei kommaseparierte Listen von Methodennamen:
+
+- `KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_ENABLED_AUTHN_METHODS`
+- `KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_DISABLED_AUTHN_METHODS`
+
+Unterstützte Methodennamen (Groß-/Kleinschreibung wird ignoriert):
+
+| Methodenname   | Beschreibung                              |
+|----------------|-------------------------------------------|
+| `eID`          | Online-Ausweisfunktion                    |
+| `eIDAS`        | Europäische eIDAS-Identifizierung         |
+| `Authega`      | Bayern-ID / Authega                       |
+| `Diia`         | Ukrainische Diia-App                      |
+| `Elster`       | ELSTER-Zertifikat                         |
+| `FINK`         | Föderales Identitätsnetz der Kommunen     |
+| `Benutzername` | Benutzername und Passwort                 |
+
+Sind beide Listen leer (kein Standardwert), wird kein `AuthnMethods`-Element in den SAML-Request eingefügt und BundID entscheidet selbst über die verfügbaren Methoden.
+
+Beispiel – eID aktivieren, FINK deaktivieren:
+
+```
+KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_ENABLED_AUTHN_METHODS=eID
+KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_DISABLED_AUTHN_METHODS=FINK
+```
+
+Mehrere Methoden werden kommasepariert angegeben:
+
+```
+KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_ENABLED_AUTHN_METHODS=eID,eIDAS,Authega
+KC_SPI_SAML_AUTHENTICATION_PREPROCESSOR_BUNDID_PROTOCOL_DISABLED_AUTHN_METHODS=Diia,Elster,FINK,Benutzername
+```
+
+Das erzeugt folgenden SAML-Request-Abschnitt:
+
+```xml
+<saml2p:Extensions>
+    <akdb:AuthenticationRequest xmlns:akdb="https://www.akdb.de/request/2018/09" Version="2">
+        <akdb:AuthnMethods>
+            <akdb:eID><akdb:Enabled>true</akdb:Enabled></akdb:eID>
+            <akdb:eIDAS><akdb:Enabled>true</akdb:Enabled></akdb:eIDAS>
+            <akdb:Authega><akdb:Enabled>true</akdb:Enabled></akdb:Authega>
+            <akdb:Diia><akdb:Enabled>false</akdb:Enabled></akdb:Diia>
+            <akdb:Elster><akdb:Enabled>false</akdb:Enabled></akdb:Elster>
+            <akdb:FINK><akdb:Enabled>false</akdb:Enabled></akdb:FINK>
+            <akdb:Benutzername><akdb:Enabled>false</akdb:Enabled></akdb:Benutzername>
+        </akdb:AuthnMethods>
+    </akdb:AuthenticationRequest>
+</saml2p:Extensions>
+```
+
+Methoden, die in keiner der beiden Listen aufgeführt sind, erscheinen nicht im `AuthnMethods`-Element.
