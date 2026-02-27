@@ -46,6 +46,9 @@ public class AuthenticationRequest {
     @XmlAttribute(name = "Version")
     private String version = "2";
 
+    @XmlElement(name = "AuthnMethods", namespace = "https://www.akdb.de/request/2018/09")
+    private AuthnMethods authnMethods;
+
     @XmlElement(name = "RequestedAttributes", namespace = "https://www.akdb.de/request/2018/09")
     private RequestedAttributes requestedAttributes = new RequestedAttributes();
 
@@ -53,6 +56,14 @@ public class AuthenticationRequest {
     private DisplayInformation displayInformation = new DisplayInformation();
 
     // getters and setters
+
+    public AuthnMethods getAuthnMethods() {
+        return authnMethods;
+    }
+
+    public void setAuthnMethods(AuthnMethods authnMethods) {
+        this.authnMethods = authnMethods;
+    }
 
     public String getVersion() {
         return version;

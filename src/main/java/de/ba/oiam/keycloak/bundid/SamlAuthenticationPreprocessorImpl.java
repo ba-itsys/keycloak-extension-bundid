@@ -18,11 +18,18 @@ package de.ba.oiam.keycloak.bundid;
 
 import com.google.auto.service.AutoService;
 import de.ba.oiam.keycloak.bundid.extension.model.AuthenticationRequest;
+import de.ba.oiam.keycloak.bundid.extension.model.AuthnMethodEnabled;
+import de.ba.oiam.keycloak.bundid.extension.model.AuthnMethods;
 import de.ba.oiam.keycloak.bundid.extension.model.DisplayInformation;
 import de.ba.oiam.keycloak.bundid.extension.model.DisplayInformationValue;
 import de.ba.oiam.keycloak.bundid.extension.model.DisplayInformationVersion;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.jboss.logging.Logger;
 import org.keycloak.Config.Scope;
 import org.keycloak.authentication.authenticators.util.AcrStore;
@@ -44,6 +51,8 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
     private static final String ONLINE_SERVICE_ID = "onlineServiceId";
     private static final String ORGANIZATION_DISPLAY_NAME = "organizationDisplayName";
     private static final String MINIMUM_STORK_LEVEL = "minimumStorkLevel";
+    private static final String ENABLED_AUTHN_METHODS = "enabledAuthnMethods";
+    private static final String DISABLED_AUTHN_METHODS = "disabledAuthnMethods";
 
     public static final String ID = "bundid-protocol";
     private static final Logger LOG = Logger.getLogger(SamlAuthenticationPreprocessorImpl.class);
@@ -54,6 +63,8 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
     private String organizationDisplayName = "";
 
     private Integer minimumStorkLevel = null;
+    private Set<String> enabledAuthnMethods = Collections.emptySet();
+    private Set<String> disabledAuthnMethods = Collections.emptySet();
 
     public SamlAuthenticationPreprocessorImpl() {}
 
@@ -72,6 +83,8 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
         onlineServiceId = config.get(ONLINE_SERVICE_ID);
         organizationDisplayName = config.get(ORGANIZATION_DISPLAY_NAME);
         minimumStorkLevel = config.getInt(MINIMUM_STORK_LEVEL);
+        enabledAuthnMethods = parseMethodList(config, ENABLED_AUTHN_METHODS);
+        disabledAuthnMethods = parseMethodList(config, DISABLED_AUTHN_METHODS);
     }
 
     @Override
@@ -121,8 +134,10 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
             }
         });
 
-        if (!StringUtil.isNullOrEmpty(onlineServiceId) || !StringUtil.isNullOrEmpty(organizationDisplayName)) {
-            addDisplayInformation(authnRequest);
+        if (!StringUtil.isNullOrEmpty(onlineServiceId)
+                || !StringUtil.isNullOrEmpty(organizationDisplayName)
+                || hasAnyAuthnMethodConfig()) {
+            updateAuthenticationRequest(authnRequest);
         }
 
         return SamlAuthenticationPreprocessor.super.beforeSendingLoginRequest(authnRequest, authSession);
@@ -139,30 +154,77 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
         return AuthnLevel.fromLoA(loa);
     }
 
-    private void addDisplayInformation(AuthnRequestType authnRequest) {
-        DisplayInformation displayInformation = new DisplayInformation();
-        displayInformation.setVersion(new DisplayInformationVersion());
-        if (!StringUtil.isNullOrEmpty(onlineServiceId)) {
-            DisplayInformationValue value = new DisplayInformationValue();
-            value.setValue(onlineServiceId);
-            displayInformation.getVersion().setOnlineServiceId(value);
-        }
-        if (!StringUtil.isNullOrEmpty(organizationDisplayName)) {
-            DisplayInformationValue value = new DisplayInformationValue();
-            value.setValue(organizationDisplayName);
-            displayInformation.getVersion().setOrganizationDisplayName(value);
+    private void updateAuthenticationRequest(AuthnRequestType authnRequest) {
+        AuthenticationRequest extension = AuthenticationRequest.readExisting(authnRequest);
+        if (extension == null) {
+            extension = new AuthenticationRequest();
         }
 
-        AuthenticationRequest existingExtension = AuthenticationRequest.readExisting(authnRequest);
+        if (!StringUtil.isNullOrEmpty(onlineServiceId) || !StringUtil.isNullOrEmpty(organizationDisplayName)) {
+            DisplayInformation displayInformation = new DisplayInformation();
+            displayInformation.setVersion(new DisplayInformationVersion());
+            if (!StringUtil.isNullOrEmpty(onlineServiceId)) {
+                DisplayInformationValue value = new DisplayInformationValue();
+                value.setValue(onlineServiceId);
+                displayInformation.getVersion().setOnlineServiceId(value);
+            }
+            if (!StringUtil.isNullOrEmpty(organizationDisplayName)) {
+                DisplayInformationValue value = new DisplayInformationValue();
+                value.setValue(organizationDisplayName);
+                displayInformation.getVersion().setOrganizationDisplayName(value);
+            }
+            extension.setDisplayInformation(displayInformation);
+        }
 
-        if (existingExtension != null) {
-            existingExtension.setDisplayInformation(displayInformation);
-            existingExtension.addOrUpdate(authnRequest);
-        } else {
-            AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-            authenticationRequest.setDisplayInformation(displayInformation);
+        if (hasAnyAuthnMethodConfig()) {
+            extension.setAuthnMethods(getAuthnMethods());
+        }
 
-            authenticationRequest.addOrUpdate(authnRequest);
+        extension.addOrUpdate(authnRequest);
+    }
+
+    private AuthnMethods getAuthnMethods() {
+        var authnMethods = new AuthnMethods();
+        for (Method method : Method.values()) {
+            if (enabledAuthnMethods.contains(method.key)) {
+                method.setter.accept(authnMethods, new AuthnMethodEnabled(true));
+            } else if (disabledAuthnMethods.contains(method.key)) {
+                method.setter.accept(authnMethods, new AuthnMethodEnabled(false));
+            }
+        }
+        return authnMethods;
+    }
+
+    private boolean hasAnyAuthnMethodConfig() {
+        return !enabledAuthnMethods.isEmpty() || !disabledAuthnMethods.isEmpty();
+    }
+
+    private static Set<String> parseMethodList(Scope config, String key) {
+        String value = config.get(key);
+        if (value == null || value.isBlank()) {
+            return Collections.emptySet();
+        }
+        return Arrays.stream(value.split(","))
+                .map(s -> s.trim().toLowerCase())
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
+    }
+
+    private enum Method {
+        AUTHEGA("authega", AuthnMethods::setAuthega),
+        DIIA("diia", AuthnMethods::setDiia),
+        EID("eid", AuthnMethods::setEid),
+        EIDAS("eidas", AuthnMethods::setEidas),
+        ELSTER("elster", AuthnMethods::setElster),
+        FINK("fink", AuthnMethods::setFink),
+        BENUTZERNAME("benutzername", AuthnMethods::setBenutzername);
+
+        final String key;
+        final BiConsumer<AuthnMethods, AuthnMethodEnabled> setter;
+
+        Method(String key, BiConsumer<AuthnMethods, AuthnMethodEnabled> setter) {
+            this.key = key;
+            this.setter = setter;
         }
     }
 }
