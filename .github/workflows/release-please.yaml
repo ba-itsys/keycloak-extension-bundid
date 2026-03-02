@@ -25,6 +25,23 @@ jobs:
           private-key: ${{ secrets.RELEASE_PLEASE_APP_PRIVATE_KEY }}
 
       - uses: googleapis/release-please-action@v4
+        id: release-please
         with:
           token: ${{ steps.app-token.outputs.token }}
           release-type: maven
+
+      - uses: actions/checkout@v6
+        if: |
+          steps.release-please.outputs.prs_created == 'true' &&
+          contains(fromJSON(steps.release-please.outputs.pr || '{}').labels, 'autorelease: snapshot')
+
+      - name: Merge SNAPSHOT-PR automatically
+        if: |
+          steps.release-please.outputs.prs_created == 'true' &&
+          contains(fromJSON(steps.release-please.outputs.pr || '{}').labels, 'autorelease: snapshot')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ fromJSON(steps.release-please.outputs.pr || '{}').number }}
+        run: |
+          echo "Merging PR $PR_NUMBER (SNAPSHOT)"
+          gh pr merge --rebase --admin "$PR_NUMBER"
