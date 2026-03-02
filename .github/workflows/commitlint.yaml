@@ -1,0 +1,7 @@
+name: Commitlint
+
+on: [ pull_request, workflow_dispatch ]
+
+jobs:
+  commitlint:
+    uses: ba-itsys/actions/.github/workflows/commitlint.yaml@main
