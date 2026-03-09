@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.6.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.5.0...v2.6.0) (2026-03-09)
+
+
+### Features
+
+* **saml:** add configurable authn method enable/disable support ([ad42fab](https://github.com/ba-itsys/keycloak-extension-bundid/commit/ad42fab524ee46f0a6a5d60ba37c0f443d0a1eb8))
+* **saml:** validate authn method config and warn on invalid entries ([7148b52](https://github.com/ba-itsys/keycloak-extension-bundid/commit/7148b52613a662f622caa1491e9453162ab4a4c4))
+
+
+### Dependencies
+
+* **deps-dev:** bump junit.version from 5.14.2 to 6.0.3 ([27edc55](https://github.com/ba-itsys/keycloak-extension-bundid/commit/27edc552d980e054751418c1d34f9771a2f34bee))
+
 ## [2.5.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.4.5...v2.5.0) (2026-02-10)
 
 
