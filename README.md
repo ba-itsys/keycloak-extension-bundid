@@ -165,3 +165,13 @@ Das erzeugt folgenden SAML-Request-Abschnitt:
 ```
 
 Methoden, die in keiner der beiden Listen aufgeführt sind, erscheinen nicht im `AuthnMethods`-Element.
+
+#### Validierung der Konfigurationswerte
+
+Ungültige oder widersprüchliche Einträge werden beim Start der Extension erkannt und per `WARN`-Log gemeldet:
+
+| Situation | Verhalten |
+|---|---|
+| Unbekannter Methodenname | Eintrag wird ignoriert; eine Warnung mit den gültigen Methodennamen wird geloggt |
+| Doppelter Methodenname in einer Liste | Duplikat wird ignoriert; eine Warnung wird geloggt |
+| Methode in beiden Listen | Methode gilt als aktiviert (enabled-Liste hat Vorrang); eine Warnung wird geloggt |

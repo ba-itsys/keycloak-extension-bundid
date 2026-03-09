@@ -25,6 +25,7 @@ import de.ba.oiam.keycloak.bundid.extension.model.DisplayInformationValue;
 import de.ba.oiam.keycloak.bundid.extension.model.DisplayInformationVersion;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -56,6 +57,12 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
 
     public static final String ID = "bundid-protocol";
     private static final Logger LOG = Logger.getLogger(SamlAuthenticationPreprocessorImpl.class);
+    private static final String LIST_TAKES_PRECEDENCE =
+            "Authn method '%s' is listed in both '%s' and '%s' – the enabled list takes precedence.";
+    private static final String UNKNOWN_AUTHN_METHODS_IGNORED =
+            "Unknown authn method '%s' in config property '%s' – will be ignored. Known values: %s";
+    private static final String DUPLICATE_ENTRY_WILL_BE_IGNORED =
+            "Duplicate authn method '%s' in config property '%s' – duplicate entry will be ignored.";
 
     private KeycloakSessionFactory sessionFactory;
     private String activeForIdp = "bundid";
@@ -85,6 +92,7 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
         minimumStorkLevel = config.getInt(MINIMUM_STORK_LEVEL);
         enabledAuthnMethods = parseMethodList(config, ENABLED_AUTHN_METHODS);
         disabledAuthnMethods = parseMethodList(config, DISABLED_AUTHN_METHODS);
+        warnOnOverlap(enabledAuthnMethods, disabledAuthnMethods);
     }
 
     @Override
@@ -199,15 +207,41 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
         return !enabledAuthnMethods.isEmpty() || !disabledAuthnMethods.isEmpty();
     }
 
-    private static Set<String> parseMethodList(Scope config, String key) {
-        String value = config.get(key);
+    private void warnOnOverlap(Set<String> enabledAuthMethods, Set<String> disabledAuthMethods) {
+        enabledAuthMethods.stream()
+                .filter(disabledAuthMethods::contains)
+                .forEach(duplicateAuthMethod -> LOG.warnf(
+                        LIST_TAKES_PRECEDENCE, duplicateAuthMethod, ENABLED_AUTHN_METHODS, DISABLED_AUTHN_METHODS));
+    }
+
+    private static final Set<String> KNOWN_METHODS =
+            Arrays.stream(Method.values()).map(method -> method.key).collect(Collectors.toUnmodifiableSet());
+
+    private static Set<String> parseMethodList(Scope config, String configKey) {
+        String value = config.get(configKey);
         if (value == null || value.isBlank()) {
             return Collections.emptySet();
         }
-        return Arrays.stream(value.split(","))
-                .map(s -> s.trim().toLowerCase())
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toSet());
+        return collectValidMethods(value.split(","), configKey);
+    }
+
+    private static Set<String> collectValidMethods(String[] authnMethods, String configKey) {
+        Set<String> result = new LinkedHashSet<>();
+        for (String authnMethod : authnMethods) {
+            String trimmedAuthnMethod = authnMethod.trim().toLowerCase();
+            if (!trimmedAuthnMethod.isEmpty()) {
+                addIfValid(trimmedAuthnMethod, configKey, result);
+            }
+        }
+        return Collections.unmodifiableSet(result);
+    }
+
+    private static void addIfValid(String authnMethod, String configKey, Set<String> result) {
+        if (!KNOWN_METHODS.contains(authnMethod)) {
+            LOG.warnf(UNKNOWN_AUTHN_METHODS_IGNORED, authnMethod, configKey, KNOWN_METHODS);
+        } else if (!result.add(authnMethod)) {
+            LOG.warnf(DUPLICATE_ENTRY_WILL_BE_IGNORED, authnMethod, configKey);
+        }
     }
 
     private enum Method {

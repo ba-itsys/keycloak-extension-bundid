@@ -24,9 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import de.ba.oiam.keycloak.bundid.extension.model.AuthenticationRequest;
+import de.ba.oiam.keycloak.bundid.extension.model.AuthnMethods;
 import java.net.URI;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.Config;
 import org.keycloak.dom.saml.v2.protocol.AuthnContextComparisonType;
 import org.keycloak.dom.saml.v2.protocol.AuthnRequestType;
@@ -81,11 +84,9 @@ class SamlAuthenticationPreprocessorTest {
 
         AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
 
-        AuthenticationRequest extension = AuthenticationRequest.readExisting(result);
-        assertNotNull(extension);
-        assertNotNull(extension.getAuthnMethods());
-        assertNotNull(extension.getAuthnMethods().getEid());
-        assertTrue(extension.getAuthnMethods().getEid().isEnabled());
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertNotNull(authnMethods.getEid());
+        assertTrue(authnMethods.getEid().isEnabled());
     }
 
     @Test
@@ -94,11 +95,9 @@ class SamlAuthenticationPreprocessorTest {
 
         AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
 
-        AuthenticationRequest extension = AuthenticationRequest.readExisting(result);
-        assertNotNull(extension);
-        assertNotNull(extension.getAuthnMethods());
-        assertNotNull(extension.getAuthnMethods().getEid());
-        assertFalse(extension.getAuthnMethods().getEid().isEnabled());
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertNotNull(authnMethods.getEid());
+        assertFalse(authnMethods.getEid().isEnabled());
     }
 
     @Test
@@ -108,28 +107,28 @@ class SamlAuthenticationPreprocessorTest {
         AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
 
         AuthenticationRequest extension = AuthenticationRequest.readExisting(result);
-        assertTrue(extension == null || extension.getAuthnMethods() == null);
+        AuthnMethods authnMethods = extension == null ? null : extension.getAuthnMethods();
+        assertNull(authnMethods);
     }
 
     @Test
     void authnMethodsAndDisplayInfoBothPresentWhenBothConfigured() {
         Config.Scope config = Mockito.mock(Config.Scope.class);
         when(config.get("activeForIdp", "bundid")).thenReturn("bundid");
-        when(config.get("organizationDisplayName")).thenReturn("BAföG Portal");
+        when(config.get("organizationDisplayName")).thenReturn("Portal");
         when(config.get("disabledAuthnMethods")).thenReturn("FINK");
         SamlAuthenticationPreprocessorImpl underTest = new SamlAuthenticationPreprocessorImpl();
         underTest.init(config);
 
         AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
 
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertFalse(authnMethods.getFink().isEnabled());
         AuthenticationRequest extension = AuthenticationRequest.readExisting(result);
-        assertNotNull(extension);
-        assertNotNull(extension.getAuthnMethods());
-        assertFalse(extension.getAuthnMethods().getFink().isEnabled());
         assertNotNull(extension.getDisplayInformation());
         assertNotNull(extension.getDisplayInformation().getVersion());
         assertEquals(
-                "BAföG Portal",
+                "Portal",
                 extension
                         .getDisplayInformation()
                         .getVersion()
@@ -148,16 +147,14 @@ class SamlAuthenticationPreprocessorTest {
 
         AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
 
-        AuthenticationRequest extension = AuthenticationRequest.readExisting(result);
-        assertNotNull(extension);
-        assertNotNull(extension.getAuthnMethods());
-        assertTrue(extension.getAuthnMethods().getAuthega().isEnabled());
-        assertFalse(extension.getAuthnMethods().getDiia().isEnabled());
-        assertTrue(extension.getAuthnMethods().getEid().isEnabled());
-        assertTrue(extension.getAuthnMethods().getEidas().isEnabled());
-        assertFalse(extension.getAuthnMethods().getElster().isEnabled());
-        assertFalse(extension.getAuthnMethods().getFink().isEnabled());
-        assertTrue(extension.getAuthnMethods().getBenutzername().isEnabled());
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertTrue(authnMethods.getAuthega().isEnabled());
+        assertFalse(authnMethods.getDiia().isEnabled());
+        assertTrue(authnMethods.getEid().isEnabled());
+        assertTrue(authnMethods.getEidas().isEnabled());
+        assertFalse(authnMethods.getElster().isEnabled());
+        assertFalse(authnMethods.getFink().isEnabled());
+        assertTrue(authnMethods.getBenutzername().isEnabled());
     }
 
     @Test
@@ -170,15 +167,65 @@ class SamlAuthenticationPreprocessorTest {
 
         AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
 
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertNotNull(authnMethods.getEid());
+        assertNull(authnMethods.getFink());
+        assertNull(authnMethods.getElster());
+        assertNull(authnMethods.getEidas());
+        assertNull(authnMethods.getAuthega());
+        assertNull(authnMethods.getDiia());
+        assertNull(authnMethods.getBenutzername());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"unknownMethod,eID", "eID,eID", "unknownMethod,eID,eID,anotherUnknown"})
+    void invalidEntriesInEnabledListAreIgnoredAndEidIsEnabled(String enabledMethods) {
+        SamlAuthenticationPreprocessorImpl underTest = createPreprocessorWithMethods(enabledMethods, null);
+
+        AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
+
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertTrue(authnMethods.getEid().isEnabled());
+        assertNull(authnMethods.getAuthega());
+        assertNull(authnMethods.getDiia());
+        assertNull(authnMethods.getEidas());
+        assertNull(authnMethods.getElster());
+        assertNull(authnMethods.getFink());
+        assertNull(authnMethods.getBenutzername());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"unknownMethod,eID", "eID,eID", "unknownMethod,eID,eID,anotherUnknown"})
+    void invalidEntriesInDisabledListAreIgnoredAndEidIsDisabled(String disabledMethods) {
+        SamlAuthenticationPreprocessorImpl underTest = createPreprocessorWithMethods(null, disabledMethods);
+
+        AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
+
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertFalse(authnMethods.getEid().isEnabled());
+        assertNull(authnMethods.getAuthega());
+        assertNull(authnMethods.getDiia());
+        assertNull(authnMethods.getEidas());
+        assertNull(authnMethods.getElster());
+        assertNull(authnMethods.getFink());
+        assertNull(authnMethods.getBenutzername());
+    }
+
+    @Test
+    void enabledListTakesPrecedenceWhenMethodIsInBothLists() {
+        SamlAuthenticationPreprocessorImpl underTest = createPreprocessorWithMethods("eID", "eID");
+
+        AuthnRequestType result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), createSession());
+
+        AuthnMethods authnMethods = getAuthnMethods(result);
+        assertTrue(authnMethods.getEid().isEnabled());
+    }
+
+    private AuthnMethods getAuthnMethods(AuthnRequestType result) {
         AuthenticationRequest extension = AuthenticationRequest.readExisting(result);
+        assertNotNull(extension);
         assertNotNull(extension.getAuthnMethods());
-        assertNotNull(extension.getAuthnMethods().getEid());
-        assertNull(extension.getAuthnMethods().getFink());
-        assertNull(extension.getAuthnMethods().getElster());
-        assertNull(extension.getAuthnMethods().getEidas());
-        assertNull(extension.getAuthnMethods().getAuthega());
-        assertNull(extension.getAuthnMethods().getDiia());
-        assertNull(extension.getAuthnMethods().getBenutzername());
+        return extension.getAuthnMethods();
     }
 
     private SamlAuthenticationPreprocessorImpl createPreprocessorWithMethods(String enabled, String disabled) {
