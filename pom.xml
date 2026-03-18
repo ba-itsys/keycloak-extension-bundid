@@ -218,6 +218,10 @@
             <publishingServerId>central</publishingServerId>
             <autoPublish>true</autoPublish>
             <waitUntil>published</waitUntil>
+            <!-- Increase the max timeout from 30min to 1h -->
+            <waitMaxTime>3600</waitMaxTime>
+            <!-- Increase the polling interval from 5s to 20s -->
+            <waitPollingInterval>20</waitPollingInterval>
           </configuration>
         </plugin>
 
