@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.6.1](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.6.0...v2.6.1) (2026-03-18)
+
+
+### Dependencies
+
+* **deps-dev:** bump com.diffplug.spotless:spotless-maven-plugin ([6f1c4ef](https://github.com/ba-itsys/keycloak-extension-bundid/commit/6f1c4efde673e36342ce1bc444b919229f68ced0))
+* **deps-dev:** bump org.mockito:mockito-core from 5.22.0 to 5.23.0 ([3b1d2d1](https://github.com/ba-itsys/keycloak-extension-bundid/commit/3b1d2d1160f1e19bfa3cf48692a1689f5c79d2b0))
+* **deps:** bump org.glassfish.jaxb:jaxb-runtime from 4.0.6 to 4.0.7 ([9a6e952](https://github.com/ba-itsys/keycloak-extension-bundid/commit/9a6e952e2d94b287e158c0de4061acabaceb202a))
+
 ## [2.6.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.5.0...v2.6.0) (2026-03-09)
 
 
