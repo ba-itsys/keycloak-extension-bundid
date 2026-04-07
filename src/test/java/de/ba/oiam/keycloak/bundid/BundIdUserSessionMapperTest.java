@@ -37,6 +37,7 @@ import org.keycloak.dom.saml.v2.assertion.AttributeType;
 import org.keycloak.dom.saml.v2.protocol.AuthnRequestType;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.IdentityProviderMapperModel;
+import org.keycloak.models.IdentityProviderModel;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.sessions.AuthenticationSessionModel;
@@ -54,7 +55,7 @@ public class BundIdUserSessionMapperTest {
         attribute.addAttributeValue("testValue");
         attributeStatement.addAttribute(new AttributeStatementType.ASTChoiceType(attribute));
         samlAssertion.addStatement(attributeStatement);
-        BrokeredIdentityContext context = new BrokeredIdentityContext("test", null);
+        BrokeredIdentityContext context = createBrokeredIdentityContext();
         context.getContextData().put(SAMLEndpoint.SAML_ASSERTION, samlAssertion);
         TestAuthenticationSessionModel authenticationSession = new TestAuthenticationSessionModel();
         context.setAuthenticationSession(authenticationSession);
@@ -90,7 +91,7 @@ public class BundIdUserSessionMapperTest {
         attribute.addAttributeValue("testValue");
         attributeStatement.addAttribute(new AttributeStatementType.ASTChoiceType(attribute));
         samlAssertion.addStatement(attributeStatement);
-        BrokeredIdentityContext context = new BrokeredIdentityContext("test", null);
+        BrokeredIdentityContext context = createBrokeredIdentityContext();
         context.getContextData().put(SAMLEndpoint.SAML_ASSERTION, samlAssertion);
         TestAuthenticationSessionModel authenticationSession = new TestAuthenticationSessionModel();
         context.setAuthenticationSession(authenticationSession);
@@ -120,7 +121,7 @@ public class BundIdUserSessionMapperTest {
         attribute.addAttributeValue("testValue");
         attributeStatement.addAttribute(new AttributeStatementType.ASTChoiceType(attribute));
         samlAssertion.addStatement(attributeStatement);
-        BrokeredIdentityContext context = new BrokeredIdentityContext("test", null);
+        BrokeredIdentityContext context = createBrokeredIdentityContext();
         context.getContextData().put(SAMLEndpoint.SAML_ASSERTION, samlAssertion);
         TestAuthenticationSessionModel authenticationSession = new TestAuthenticationSessionModel();
         context.setAuthenticationSession(authenticationSession);
@@ -166,7 +167,7 @@ public class BundIdUserSessionMapperTest {
         attribute2.addAttributeValue("testValue");
         attributeStatement.addAttribute(new AttributeStatementType.ASTChoiceType(attribute1));
         samlAssertion.addStatement(attributeStatement);
-        BrokeredIdentityContext context = new BrokeredIdentityContext("test", null);
+        BrokeredIdentityContext context = createBrokeredIdentityContext();
         context.getContextData().put(SAMLEndpoint.SAML_ASSERTION, samlAssertion);
         TestAuthenticationSessionModel authenticationSession = new TestAuthenticationSessionModel();
         context.setAuthenticationSession(authenticationSession);
@@ -198,6 +199,12 @@ public class BundIdUserSessionMapperTest {
                         .getRequestedAttributes()
                         .getRequestedAttributes()
                         .size());
+    }
+
+    private static BrokeredIdentityContext createBrokeredIdentityContext() {
+        IdentityProviderModel identityProviderModel = new IdentityProviderModel();
+        identityProviderModel.setEnabled(true);
+        return new BrokeredIdentityContext("test", identityProviderModel);
     }
 
     private static class TestAuthenticationSessionModel implements AuthenticationSessionModel {

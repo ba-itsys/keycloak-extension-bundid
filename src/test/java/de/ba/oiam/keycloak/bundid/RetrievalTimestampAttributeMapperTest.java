@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.keycloak.broker.provider.BrokeredIdentityContext;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.IdentityProviderMapperModel;
+import org.keycloak.models.IdentityProviderModel;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.sessions.AuthenticationSessionModel;
@@ -35,7 +36,7 @@ import org.keycloak.sessions.RootAuthenticationSessionModel;
 public class RetrievalTimestampAttributeMapperTest {
     @Test
     void addsTimestamp() {
-        BrokeredIdentityContext context = new BrokeredIdentityContext("test", null);
+        BrokeredIdentityContext context = createBrokeredIdentityContext();
         TestAuthenticationSessionModel authenticationSession = new TestAuthenticationSessionModel();
         context.setAuthenticationSession(authenticationSession);
 
@@ -47,6 +48,12 @@ public class RetrievalTimestampAttributeMapperTest {
         mapper.importNewUser(null, null, null, mapperModel, context);
 
         assertNotNull(authenticationSession.getUserSessionNotes().get("targetAttribute"));
+    }
+
+    private static BrokeredIdentityContext createBrokeredIdentityContext() {
+        IdentityProviderModel identityProviderModel = new IdentityProviderModel();
+        identityProviderModel.setEnabled(true);
+        return new BrokeredIdentityContext("test", identityProviderModel);
     }
 
     private static class TestAuthenticationSessionModel implements AuthenticationSessionModel {
