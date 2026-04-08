@@ -1,6 +1,6 @@
 ARG KEYCLOAK_VERSION=26.5.2
 
-FROM maven:3-eclipse-temurin-21-alpine AS build
+FROM maven:3-eclipse-temurin-25-alpine AS build
 
 COPY src /app/src
 COPY pom.xml /app
