@@ -5,10 +5,18 @@
 
 version: 2
 updates:
-  - package-ecosystem: maven # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "maven"
+    directory: "/"
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "deps"
+      prefix: "deps" # to trigger a new release (release-please)
       include: "scope"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
