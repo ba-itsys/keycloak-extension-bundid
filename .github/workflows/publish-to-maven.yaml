@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
           cache: maven
           server-id: central # Maven Central (Sonatype)
           server-username: MAVEN_USERNAME # env variable for username in deploy
