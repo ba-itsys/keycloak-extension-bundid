@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.8.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.7.0...v2.8.0) (2026-05-13)
+
+
+### Features
+
+* **update:** keycloak bump to 26.6.1, java bump to 25 ([7b381fa](https://github.com/ba-itsys/keycloak-extension-bundid/commit/7b381fadb12a134561a84b9f1a648842615fc1b3))
+
+
+### Dependencies
+
+* **deps:** bump org.glassfish.jaxb:jaxb-runtime from 4.0.7 to 4.0.8 ([d8b7ec2](https://github.com/ba-itsys/keycloak-extension-bundid/commit/d8b7ec234c9a93e71ec83611c57b85abdc6cbf5c))
+
 ## [2.7.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.6.0...v2.7.0) (2026-04-07)
 
 
