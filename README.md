@@ -175,3 +175,18 @@ Ungültige oder widersprüchliche Einträge werden beim Start der Extension erka
 | Unbekannter Methodenname | Eintrag wird ignoriert; eine Warnung mit den gültigen Methodennamen wird geloggt |
 | Doppelter Methodenname in einer Liste | Duplikat wird ignoriert; eine Warnung wird geloggt |
 | Methode in beiden Listen | Methode gilt als aktiviert (enabled-Liste hat Vorrang); eine Warnung wird geloggt |
+
+## Local Development
+
+### Prerequisites
+
+- **JDK**: See `pom.xml` for the required Java version.
+- **Maven**: Used for building the project.
+- **Docker**: Required to build and run a local Keycloak instance with the extension installed.
+
+### Checks (formatting and tests)
+
+Run the following commands locally to ensure code quality:
+
+- **Formatting**: `mvn spotless:apply` (Ensures consistent code style).
+- **Verification**: `mvn verify` (Runs the full test suite and builds the project).
