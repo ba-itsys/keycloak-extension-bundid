@@ -59,7 +59,7 @@
     <sonar.organization>opdt</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-    <junit.version>6.0.3</junit.version>
+    <junit.version>6.1.0</junit.version>
   </properties>
 
   <dependencies>
