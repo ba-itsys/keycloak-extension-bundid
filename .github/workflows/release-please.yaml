@@ -30,7 +30,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           release-type: maven
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: |
           steps.release-please.outputs.prs_created == 'true' &&
           contains(fromJSON(steps.release-please.outputs.pr || '{}').labels, 'autorelease: snapshot')
