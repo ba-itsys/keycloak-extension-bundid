@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.8.2](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.1...v2.8.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* downgrade to java 21 (used by kc as well) ([#120](https://github.com/ba-itsys/keycloak-extension-bundid/issues/120)) ([4e06ec5](https://github.com/ba-itsys/keycloak-extension-bundid/commit/4e06ec5d17902ce7a76d4a90440dbf5f3f951949)), closes [#115](https://github.com/ba-itsys/keycloak-extension-bundid/issues/115)
+
+
+### Dependencies
+
+* **deps-dev:** bump com.diffplug.spotless:spotless-maven-plugin ([c992207](https://github.com/ba-itsys/keycloak-extension-bundid/commit/c9922070f77c80363c219a856ff0173ead43c349))
+* **deps-dev:** bump com.diffplug.spotless:spotless-maven-plugin ([57fdb06](https://github.com/ba-itsys/keycloak-extension-bundid/commit/57fdb06947dbbc07e8dc5874ae5769aa5948318f))
+* **deps:** bump keycloak-version from 26.6.2 to 26.6.3 ([d3adb5d](https://github.com/ba-itsys/keycloak-extension-bundid/commit/d3adb5d5af1a1a4d239a93c3197760d4c12d92d8))
+* **deps:** bump org.glassfish.jaxb:jaxb-runtime from 4.0.8 to 4.0.9 ([2b53cb9](https://github.com/ba-itsys/keycloak-extension-bundid/commit/2b53cb9cb0d67b8e375c93107b7b8f02ed98920d))
+* **deps:** bump org.jacoco:jacoco-maven-plugin from 0.8.14 to 0.8.15 ([a174d90](https://github.com/ba-itsys/keycloak-extension-bundid/commit/a174d90cd705c56882e6142b2abf59b3528a2ccd))
+* **deps:** bump org.sonatype.central:central-publishing-maven-plugin ([d2f645c](https://github.com/ba-itsys/keycloak-extension-bundid/commit/d2f645ca88ffa6845dfca6b1f7f3a8413743e0d9))
+
 ## [2.8.1](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.0...v2.8.1) (2026-05-26)
 
 
