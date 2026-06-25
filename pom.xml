@@ -49,7 +49,7 @@
   </scm>
 
   <properties>
-    <java.version>25</java.version>
+    <java.version>21</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <keycloak-version>26.6.3</keycloak-version>
