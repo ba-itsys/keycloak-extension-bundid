@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.8.3](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.2...v2.8.3) (2026-06-30)
+
+
+### Dependencies
+
+* **deps-dev:** bump junit.version from 6.1.0 to 6.1.1 ([9099644](https://github.com/ba-itsys/keycloak-extension-bundid/commit/9099644b09646cb8e890d9a4b831e825e0205498))
+* **deps:** bump keycloak-version from 26.6.3 to 26.6.4 ([bc3501a](https://github.com/ba-itsys/keycloak-extension-bundid/commit/bc3501a821f62b4ea62a20ae9d2e22bf658fa6fa))
+
 ## [2.8.2](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.1...v2.8.2) (2026-06-25)
 
 
