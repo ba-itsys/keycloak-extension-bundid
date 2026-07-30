@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.5](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.4...v2.8.5) (2026-07-30)
+
+
+### Dependencies
+
+* **deps-dev:** bump org.apache.maven.plugins:maven-jar-plugin ([085f3d1](https://github.com/ba-itsys/keycloak-extension-bundid/commit/085f3d133bbdf601310d4d19cb6d632707fb3952))
+
 ## [2.8.4](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.3...v2.8.4) (2026-07-14)
 
 
