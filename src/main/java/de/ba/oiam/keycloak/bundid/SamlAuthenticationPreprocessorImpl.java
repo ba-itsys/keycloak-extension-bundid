@@ -42,6 +42,7 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.protocol.saml.preprocessor.SamlAuthenticationPreprocessor;
 import org.keycloak.sessions.AuthenticationSessionModel;
+import org.keycloak.utils.KeycloakSessionUtil;
 import org.keycloak.utils.StringUtil;
 
 @AutoService(SamlAuthenticationPreprocessor.class)
@@ -152,7 +153,7 @@ public class SamlAuthenticationPreprocessorImpl implements SamlAuthenticationPre
     }
 
     private AuthnLevel getAuthnLevel(AuthenticationSessionModel authSession) {
-        AcrStore acrStore = new AcrStore(null, authSession);
+        AcrStore acrStore = new AcrStore(KeycloakSessionUtil.getKeycloakSession(), authSession);
         int loa = acrStore.getRequestedLevelOfAuthentication(null);
 
         if (minimumStorkLevel != null) {
