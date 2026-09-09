@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.8.7](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.6...v2.8.7) (2026-09-09)
+
+
+### Dependencies
+
+* **deps-dev:** bump com.diffplug.spotless:spotless-maven-plugin ([818f098](https://github.com/ba-itsys/keycloak-extension-bundid/commit/818f09884bbe70350750e3dc27636cbc929770af))
+* **deps-dev:** bump com.diffplug.spotless:spotless-maven-plugin ([b83936e](https://github.com/ba-itsys/keycloak-extension-bundid/commit/b83936e932befcc5d866b2d013754b2404841b84))
+* **deps-dev:** bump org.apache.maven.plugins:maven-compiler-plugin ([753b760](https://github.com/ba-itsys/keycloak-extension-bundid/commit/753b760fedd035d6211408837fe8781336d16b76))
+* **deps:** bump keycloak-version from 26.7.2 to 26.7.3 ([2ed7361](https://github.com/ba-itsys/keycloak-extension-bundid/commit/2ed736190870132176751c520d930bcb61fad6cc))
+
 ## [2.8.6](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.5...v2.8.6) (2026-08-27)
 
 
