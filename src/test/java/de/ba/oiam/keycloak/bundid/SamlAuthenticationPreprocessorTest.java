@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.ba.oiam.keycloak.bundid.extension.model.AuthenticationRequest;
@@ -31,10 +32,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.Config;
+import org.keycloak.authentication.RequiredActionProvider;
 import org.keycloak.dom.saml.v2.protocol.AuthnContextComparisonType;
 import org.keycloak.dom.saml.v2.protocol.AuthnRequestType;
 import org.keycloak.models.Constants;
+import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.UserModel;
 import org.keycloak.sessions.AuthenticationSessionModel;
+import org.keycloak.utils.KeycloakSessionUtil;
 import org.mockito.Answers;
 import org.mockito.Mockito;
 
@@ -59,6 +64,35 @@ class SamlAuthenticationPreprocessorTest {
         assertEquals(
                 List.of(AuthnLevel.STORK4.getFullname()),
                 expectedResult.getRequestedAuthnContext().getAuthnContextClassRef());
+    }
+
+    @Test
+    void authenticatedIdpLinkUsesCurrentKeycloakSession() {
+        final SamlAuthenticationPreprocessorImpl underTest = new SamlAuthenticationPreprocessorImpl();
+        final KeycloakSession keycloakSession = Mockito.mock(KeycloakSession.class);
+        final AuthenticationSessionModel authSession =
+                Mockito.mock(AuthenticationSessionModel.class, Answers.RETURNS_DEEP_STUBS);
+        final UserModel user = Mockito.mock(UserModel.class);
+        when(authSession.getAuthenticatedUser()).thenReturn(user);
+        when(authSession.getClientNote(Constants.REQUESTED_LEVEL_OF_AUTHENTICATION))
+                .thenReturn("3");
+        when(authSession.getClientNote(Constants.KC_ACTION)).thenReturn("idp_link");
+
+        final KeycloakSession previousSession = KeycloakSessionUtil.setKeycloakSession(keycloakSession);
+        AuthnRequestType result;
+        try {
+            result = underTest.beforeSendingLoginRequest(createBundIdAuthnRequest(), authSession);
+        } finally {
+            KeycloakSessionUtil.setKeycloakSession(previousSession);
+        }
+
+        verify(keycloakSession).getProvider(RequiredActionProvider.class, "idp_link");
+        assertEquals(
+                AuthnContextComparisonType.MINIMUM,
+                result.getRequestedAuthnContext().getComparison());
+        assertEquals(
+                List.of(AuthnLevel.STORK3.getFullname()),
+                result.getRequestedAuthnContext().getAuthnContextClassRef());
     }
 
     @Test
