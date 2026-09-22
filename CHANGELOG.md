@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.8](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.7...v2.8.8) (2026-09-22)
+
+
+### Dependencies
+
+* **deps:** bump keycloak-version from 26.7.3 to 26.7.4 ([86a9314](https://github.com/ba-itsys/keycloak-extension-bundid/commit/86a9314c6aef986ae1659a36fc8fd9c609a14bf3))
+
 ## [2.8.7](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.6...v2.8.7) (2026-09-21)
 
 
