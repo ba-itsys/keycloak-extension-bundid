@@ -190,3 +190,14 @@ Run the following commands locally to ensure code quality:
 
 - **Formatting**: `mvn spotless:apply` (Ensures consistent code style).
 - **Verification**: `mvn verify` (Runs the full test suite and builds the project).
+
+## Contributing
+
+Contributions are welcome! For detailed instructions, please refer to our central [Contributing Guide](https://github.com/ba-itsys/.github/blob/main/CONTRIBUTING.md).
+
+In short:
+
+- **Commit Guidelines**: We strictly follow [Conventional Commits](https://www.conventionalcommits.org/) — the commit type (e.g., `feat`, `fix`, `docs`) drives our automated versioning and changelog generation. All commits must be signed off with `git commit -s` (DCO).
+- **Pull Request Process**: Fork the repository, create a feature branch from `main`, and open a Pull Request against `main` (rebased on the latest `main`). Every bug fix or new feature should include corresponding tests.
+- **Release Process**: Releases are automated with [release-please](https://github.com/googleapis/release-please), which parses the conventional commits from the merged history to create version bumps, changelogs, and releases. See the [Release Process documentation](https://github.com/ba-itsys/.github/blob/main/docs/release-process.md) for details on commit types, validation, and the full release flow.
+
