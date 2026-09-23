@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.9](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.8...v2.8.9) (2026-09-23)
+
+
+### Documentation
+
+* add contributing guidelines to README ([8c1c89b](https://github.com/ba-itsys/keycloak-extension-bundid/commit/8c1c89b6d76859b3550256a356eb16f320d5e897))
+
 ## [2.8.8](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.7...v2.8.8) (2026-09-22)
 
 
