@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.10](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.9...v2.8.10) (2026-10-02)
+
+
+### Dependencies
+
+* **deps-dev:** bump org.mockito:mockito-core from 5.23.0 to 5.24.0 ([5bac9fe](https://github.com/ba-itsys/keycloak-extension-bundid/commit/5bac9fefcd7bdf62fd08d3a768b6bb060d8611ba))
+
 ## [2.8.9](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.8...v2.8.9) (2026-09-23)
 
 
