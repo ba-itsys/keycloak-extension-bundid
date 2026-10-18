@@ -1,4 +1,4 @@
-ARG KEYCLOAK_VERSION=26.6.1
+ARG KEYCLOAK_VERSION=26.8.1
 
 FROM maven:3-eclipse-temurin-25-alpine AS build
 
