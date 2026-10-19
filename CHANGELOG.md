@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.9.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.9...v2.9.0) (2026-10-19)
+
+
+### Features
+
+* update to Keycloak 26.8.1 ([6b7ae7a](https://github.com/ba-itsys/keycloak-extension-bundid/commit/6b7ae7a33c30d104a936456ec548d49b59ad576d))
+
+
+### Dependencies
+
+* **deps-dev:** bump org.mockito:mockito-core from 5.23.0 to 5.24.0 ([5bac9fe](https://github.com/ba-itsys/keycloak-extension-bundid/commit/5bac9fefcd7bdf62fd08d3a768b6bb060d8611ba))
+
 ## [2.8.9](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.8...v2.8.9) (2026-09-23)
 
 
