@@ -21,6 +21,7 @@ import static org.keycloak.protocol.oidc.mappers.OIDCAttributeMapperHelper.TOKEN
 import com.google.auto.service.AutoService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import org.keycloak.models.*;
 import org.keycloak.protocol.ProtocolMapper;
 import org.keycloak.protocol.oidc.mappers.*;
@@ -65,19 +66,10 @@ public class BundIdProtocolMapper extends AbstractOIDCProtocolMapper
     }
 
     protected void setClaim(IDToken token, ProtocolMapperModel mappingModel, UserSessionModel userSession) {
-        userSession.getNotes().entrySet().stream()
-                .filter(e -> e.getKey().startsWith(BundIdUserSessionAttributeMapper.BUNDID_SESSION_ATTRIBUTE_PREFIX))
-                .forEach(e -> {
-                    mappingModel
-                            .getConfig()
-                            .put(
-                                    TOKEN_CLAIM_NAME,
-                                    e.getKey()
-                                            .replace(
-                                                    BundIdUserSessionAttributeMapper.BUNDID_SESSION_ATTRIBUTE_PREFIX,
-                                                    ""));
-                    OIDCAttributeMapperHelper.mapClaim(token, mappingModel, e.getValue());
-                });
+        forEachBundIdNote(
+                mappingModel,
+                userSession,
+                (claimModel, value) -> OIDCAttributeMapperHelper.mapClaim(token, claimModel, value));
     }
 
     @Override
@@ -87,10 +79,25 @@ public class BundIdProtocolMapper extends AbstractOIDCProtocolMapper
             UserSessionModel userSession,
             KeycloakSession keycloakSession,
             ClientSessionContext clientSessionCtx) {
+        forEachBundIdNote(
+                mappingModel,
+                userSession,
+                (claimModel, value) -> OIDCAttributeMapperHelper.mapClaim(accessTokenResponse, claimModel, value));
+    }
+
+    /**
+     * The mapper model is shared (realm cache, concurrent requests), so each claim gets its own copy
+     * carrying the claim name derived from the session note key.
+     */
+    private static void forEachBundIdNote(
+            ProtocolMapperModel mappingModel,
+            UserSessionModel userSession,
+            BiConsumer<ProtocolMapperModel, String> claimMapper) {
         userSession.getNotes().entrySet().stream()
                 .filter(e -> e.getKey().startsWith(BundIdUserSessionAttributeMapper.BUNDID_SESSION_ATTRIBUTE_PREFIX))
                 .forEach(e -> {
-                    mappingModel
+                    ProtocolMapperModel claimModel = new ProtocolMapperModel(mappingModel);
+                    claimModel
                             .getConfig()
                             .put(
                                     TOKEN_CLAIM_NAME,
@@ -98,7 +105,7 @@ public class BundIdProtocolMapper extends AbstractOIDCProtocolMapper
                                             .replace(
                                                     BundIdUserSessionAttributeMapper.BUNDID_SESSION_ATTRIBUTE_PREFIX,
                                                     ""));
-                    OIDCAttributeMapperHelper.mapClaim(accessTokenResponse, mappingModel, e.getValue());
+                    claimMapper.accept(claimModel, e.getValue());
                 });
     }
 }
