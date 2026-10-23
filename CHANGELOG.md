@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.9.1](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.9.0...v2.9.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* copy mapper config instead of overriding shared state ([69f0570](https://github.com/ba-itsys/keycloak-extension-bundid/commit/69f0570f8b31291d15acc641c5fc989a4685cfce))
+
+
+### Dependencies
+
+* **deps-dev:** bump com.diffplug.spotless:spotless-maven-plugin ([76fff32](https://github.com/ba-itsys/keycloak-extension-bundid/commit/76fff32fab575b17c00468104cb0b48505fbd45d))
+
 ## [2.9.0](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.8.9...v2.9.0) (2026-10-19)
 
 
