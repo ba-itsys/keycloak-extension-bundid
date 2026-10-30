@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.2](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.9.1...v2.9.2) (2026-10-30)
+
+
+### Dependencies
+
+* **deps:** bump org.jacoco:jacoco-maven-plugin from 0.8.15 to 0.8.16 ([7083031](https://github.com/ba-itsys/keycloak-extension-bundid/commit/7083031d53c62a3695270ea00eed6f1ab1b27ddf))
+
 ## [2.9.1](https://github.com/ba-itsys/keycloak-extension-bundid/compare/v2.9.0...v2.9.1) (2026-10-23)
 
 
