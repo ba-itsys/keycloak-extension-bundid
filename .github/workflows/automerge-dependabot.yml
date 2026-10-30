@@ -1,0 +1,49 @@
+# Automate Dependabot with Actions
+# See: https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/automate-dependabot-with-actions
+
+name: Dependabot auto-merge
+
+# Important: This workflow runs in the context of the target branch with secrets available!
+# Do not check out and execute arbitrary files!
+# If used incorrectly, this may be a security risk!
+# See: https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target
+on: pull_request_target
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.user.login == 'dependabot[bot]'
+        && github.repository == 'ba-itsys/keycloak-extension-bundid'
+
+    steps:
+      # Important: Do not check out and execute arbitrary files!
+      # See above for details.
+
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.RELEASE_PLEASE_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_PLEASE_APP_PRIVATE_KEY }}
+
+      - name: Dependabot fetch metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+
+      - name: Enable auto-merge for Dependabot PRs
+        if: |
+          steps.dependabot-metadata.outputs.package-ecosystem != 'docker'
+          && (steps.metadata.outputs.update-type == 'version-update:semver-minor'
+                || steps.metadata.outputs.update-type == 'version-update:semver-patch')
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --rebase "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
