@@ -42,6 +42,7 @@ jobs:
           && (steps.metadata.outputs.update-type == 'version-update:semver-minor'
                 || steps.metadata.outputs.update-type == 'version-update:semver-patch')
         run: |
+          gh pr edit "$PR_URL" --add-label "automerge"
           gh pr review --approve "$PR_URL"
           gh pr merge --auto --rebase "$PR_URL"
         env:
